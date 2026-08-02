@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>کارسرا</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family:
+          "Segoe UI",
+          system-ui,
+          -apple-system,
+          sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: #f0f2f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+      }
+
+      .workspace-container {
+        max-width: 800px;
+        width: 100%;
+        background-color: #ffffff;
+        box-shadow: 0 25px 50px -12px rgba(106, 50, 138, 0.2);
+        overflow: hidden;
+        border: 1px solid rgba(128, 128, 128, 0.15);
+      }
+
+      .workspace-header {
+        background: linear-gradient(
+          135deg,
+          #4a1a6b 0%,
+          #7b3f9e 50%,
+          #9f5fc9 100%
+        );
+        padding: 1.2rem 2rem;
+        border-bottom: 3px solid #b39ddb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+
+        & h1 {
+          color: #ffffff;
+          font-size: 1.4rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 0.8rem;
+        }
+      }
+
+      .file-status {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 0.4rem 1.2rem;
+        color: #e8e0f0;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        & .dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #66bb6a;
+          display: inline-block;
+        }
+      }
+
+      .workspace-body {
+        padding: 1.5rem;
+        background-color: #ffffff;
+      }
+
+      .card {
+        background-color: #faf9fc;
+        border-radius: 5px;
+        padding: 1.5rem;
+        border: 2px solid #e8e2f0;
+        transition: all 0.3s ease;
+
+        &:hover {
+          border-color: #b39ddb;
+          box-shadow: 0 8px 24px rgba(123, 63, 158, 0.08);
+        }
+      }
+
+      .card-title {
+        color: #4a2c5e;
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid #e8e2f0;
+      }
+
+      .file-preview {
+        background: #ffffff;
+        border-radius: 4px;
+        padding: 1rem;
+        border: 1px solid #e8e0f0;
+        margin-bottom: 1rem;
+
+        & .file-name {
+          font-weight: 600;
+          color: #3a2a48;
+          font-size: 0.95rem;
+          word-break: break-all;
+        }
+
+        & .file-meta {
+          color: #88809c;
+          font-size: 0.8rem;
+          margin-top: 0.3rem;
+          display: flex;
+          gap: 0.8rem;
+          flex-wrap: wrap;
+
+          & span {
+            background: #f0ebf7;
+            padding: 0.15rem 0.7rem;
+          }
+        }
+      }
+
+      .shortcuts-section {
+        background: #f8f4fc;
+        border-radius: 4px;
+        padding: 1rem;
+        margin: 1rem 0;
+        border: 2px dashed #b39ddb;
+
+        & .shortcut-title {
+          font-weight: 600;
+          color: #4a2c5e;
+          font-size: 0.9rem;
+          margin-bottom: 0.8rem;
+          display: flex;
+          gap: 0.4rem;
+        }
+      }
+
+      .shortcard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.6rem;
+      }
+
+      .shortcut-item {
+        background-color: #faf9fc;
+        padding: 0.5rem;
+        border-radius: 2px;
+        border: 1px solid #7b3f9e;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        transition: all 0.2s;
+
+        & .key-combo {
+          background-color: #4a1a6b;
+          color: #fff;
+          padding: 0.15rem 0.6rem;
+          font-size: 0.7rem;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+
+          & kbd {
+            background-color: transparent;
+            color: #fff;
+            padding: 0;
+          }
+        }
+      }
+
+      .convert-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 0.7rem;
+        margin: 1rem 0;
+      }
+
+      .convert-btn-ui {
+        padding: 0.7rem 0.5rem;
+        background-color: #fff;
+        border: 2px solid #e8e0f0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        text-align: center;
+        font-weight: 500;
+        color: #4a2c5e;
+        font-size: 0.8rem;
+
+        &:hover:not(:disabled) {
+          border-color: #7b3f9e;
+          background: #f8f4fc;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(123, 63, 158, 0.1);
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+          transition: none;
+        }
+
+        & .ext-label {
+          font-size: 0.65rem;
+          color: #88809c;
+          display: block;
+          margin-top: 0.1rem;
+        }
+
+        & .active-shortcut {
+          border-color: #7b3f9e;
+          background-color: #ede6f5;
+          box-shadow: 0 0 0 3px rgba(123, 63, 158, 0.2);
+        }
+      }
+
+      /* .audio-convert-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 0.7rem;
+        margin-top: 0.8rem;
+      } */
+
+      /* .audio-btn {
+        padding: 0.6rem;
+        background: linear-gradient(135deg, #7b3f9e 0%, #9f5fc9 100%);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        font-weight: 500;
+        font-size: 0.8rem;
+
+        &:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(123, 63, 158, 0.3);
+        }
+
+        &:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+          transform: none;
+        }
+      } */
+
+      .processing-status {
+        display: none;
+        padding: 0.6rem;
+        margin-top: 0.5rem;
+        background: #fff3e0;
+        border-radius: 10px;
+        color: #e65100;
+        text-align: center;
+        font-size: 0.85rem;
+
+        &.active {
+          display: block;
+        }
+
+        &.success {
+          background-color: #e8f5e9;
+          color: #2e7d32;
+        }
+      }
+
+      .output-area {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #fff;
+        border-radius: 12px;
+        border: 2px solid #e8e2f0;
+        display: none;
+
+        &.active {
+          display: block;
+        }
+
+        & .output-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.8rem;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+
+          & .status {
+            color: #2e7d32;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+          }
+        }
+
+        & .output-content {
+          background: #f8f6fc;
+          padding: 0.8rem;
+          border-radius: 10px;
+          max-height: 200px;
+          overflow-y: auto;
+          font-size: 0.8rem;
+          color: #3a2a48;
+          white-space: pre-wrap;
+          word-break: break-all;
+          font-family: "Consolas", monospace;
+        }
+      }
+
+      .output-actions {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-top: 0.8rem;
+      }
+
+      /* .audio-player-section {
+        margin-top: 0.8rem;
+        padding: 0.8rem;
+        background: #f8f6fc;
+        border-radius: 10px;
+        border: 1px solid #e8e2f0;
+
+        & audio {
+          width: 100%;
+          border-radius: 8px;
+        }
+      } */
+
+      .btn {
+        padding: 0.5rem 1.2rem;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: inline-block;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #7b3f9e 0%);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(123, 63, 158, 0.3);
+
+        &:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(123, 63, 158, 0.4);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+        }
+      }
+
+      .btn-secondary {
+        background: #e8e2f0;
+        color: #4a2c5e;
+
+        &:hover {
+          background: #d1c4e9;
+          transform: translateY(-2px);
+        }
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #43a047 0%);
+        color: #ffffff;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(76, 175, 80, 03);
+        }
+      }
+
+      .btn-sm {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.75rem;
+      }
+
+      .disabled-btn {
+        opacity: 0.5;
+        cursor: not-allowed;
+        &:hover {
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="workspace-container">
+      <header class="workspace-header">
+        <h1>کارسرا تبدیل فایل</h1>
+        <div
+          style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap"
+        >
+          <div class="file-status">
+            <span class="dot"></span>
+            <span id="statusText"></span>
+          </div>
+        </div>
+      </header>
+
+      <div class="workspace-body">
+        <div class="card">
+          <div class="card-title">تبدیل فایل</div>
+
+          <div class="file-preview" id="filePreview">
+            <div class="file-name" id="displayFileName">نام فایل: -</div>
+            <div class="file-meta">
+              <span id="displayFileSize">اندازه: -</span>
+              <span id="displayFileExt">اکستنشن: -</span>
+              <span id="displayFileType">نوع: -</span>
+            </div>
+          </div>
+
+          <div class="shortcuts-section">
+            <div class="shortcut-title">
+              میانبر کیبورد
+              <span style="direction: ltr">(Ctrl + Shift + کلید)</span>
+            </div>
+            <div class="shortcard-grid">
+              <div class="shortcut-item">
+                <span>TXT</span>
+                <span class="key-combo"><kbd>Ctrl + Shift + L</kbd></span>
+              </div>
+
+              <div class="shortcut-item">
+                <span>DOCX</span>
+                <span class="key-combo"><kbd>Ctrl + Shift + W</kbd></span>
+              </div>
+
+              <div class="shortcut-item">
+                <span>صوت</span>
+                <span class="key-combo"><kbd>Ctrl + Shift + P</kbd></span>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 0.5rem">
+            <div
+              style="
+                font-weight: 600;
+                color: #4a2c5e;
+                margin-bottom: 0.6rem;
+                font-size: 0.9rem;
+              "
+            >
+              تبدیل با دکمه
+            </div>
+            <div class="conver-grid" id="converGrid">
+              <button
+                class="convert-btn-ui"
+                data-format="txt"
+                data-shortcut="L"
+              >
+                (TXT)
+                <span class="ext-icon">متن ساده</span>
+              </button>
+
+              <button
+                class="convert-btn-ui"
+                data-format="docx"
+                data-shortcut="W"
+              >
+                (DOCX)
+                <span class="ext-icon">مایکروسافت ورد</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- <div
+            style="
+              margin-top: 1rem;
+              padding-top: 1rem;
+              border-top: 2px solid #e8e0f0;
+            "
+          >
+            <div
+              style="
+                font-weight: 600;
+                color: #4a2c5e;
+                margin-bottom: 0.6rem;
+                font-size: 0.9rem;
+              "
+            >
+              تبدیل به صوت (Ctrl + S)
+            </div>
+            <div class="audio-convert-grid">
+              <button class="audio-btn" id="speechBtn" data-shortcut="3">
+                گفتار (Presion)
+              </button>
+              <button
+                class="audio-btn"
+                id="speechEnBtn"
+                style="
+                  background: linear-gradient(135deg, #6a328a 0%, #8e4fb3 100%);
+                "
+              >
+                گفتار (English)
+              </button>
+            </div> -->
+
+          <div
+              class="audio-player-section"
+              id="audioPlayerSection"
+              style="display: none"
+            >
+              <audio controls id="audioPlayer">
+                <source src="" type="audio/mpeg" />
+                مرورگر شما از پخش صدا پشتیبانی نمی کند.
+              </audio>
+              <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem">
+                <button class="btn btn-success btn-sm" id="downloadAudioBtn">
+                  دانلود صوت
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="processing-status" id="processingStatus">
+            در حال پردازش...
+          </div> 
+
+          <div class="output-area" id="outputArea">
+            <div class="output-header">
+              <span class="status">تبدیل انجام شد</span>
+              <span style="font-size: 0.75rem; color: #88809c" id="outputFormt"
+                >فرمت: -</span
+              >
+            </div>
+
+            <div class="output-content" id="outputContent"></div>
+
+            <div class="output-actions">
+              <button class="btn btn-success btn-sm" id="downloadOutputBtn">
+                دانلود
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+(async function () {
+  function getFIlefromDb() {
+    return new Promise((res, rej) => {
+      const req = indexedDB.open("FileDB", 1);
+      req.onerror = (e) => rej(e.target.error);
+      req.onsuccess = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains("files"))
+          return rej("file وجود ندارد");
+        const tx = db.transaction(["files"], "readonly");
+        const store = tx.objectStore("files");
+        const getReq = store.get("currentPDF");
+        getReq.onsuccess = (e) =>
+          e.target.result ? res(e.target.result) : rej("پیدا نشد");
+        getReq.onerror = (e) => rej(e.target.error);
+      };
+    });
+  }
+
+  function getTextFromDb(record) {
+    return new Promise((res, rej) => {
+      const req = indexedDB.open("FileDB", 1);
+      req.onsuccess = (e) => {
+        const db = e.target.result;
+        const tx = db.transaction(["files"], "readonly");
+        const store = tx.objectStore("files");
+        const getReq = store.get("currentPDF");
+        getReq.onsuccess = (ev) => {
+          const data = ev.target.result;
+          res(data?.extractedText || "");
+        };
+        getReq.onerror = (e) => rej(e.target.error);
+      };
+      req.onerror = (e) => rej(e.target.error);
+    });
+  }
+
+  let currentFile = null;
+  try {
+    const file = await getFIlefromDb();
+    currentFile = {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      ext: file.name.split(".").pop().toLowerCase(),
+    };
+  } catch (err) {
+    document.getElementById("statusText").textContent = "خطا در خواندن فایل";
+  }
+
+  const displayFileName = document.getElementById("displayFileName");
+  const displayFileSize = document.getElementById("displayFileSize");
+  const displayFileExt = document.getElementById("displayFileExt");
+  const displayFileType = document.getElementById("displayFileType");
+  const statusText = document.getElementById("statusText");
+  const convertBTNs = document.querySelectorAll(".convert-btn-ui");
+  const processingStatus = document.getElementById("processingStatus");
+  const outputArea = document.getElementById("outputArea");
+  const outputContent = document.getElementById("outputContent");
+  const outputFormt = document.getElementById("outputFormt");
+  const openFileBtn = document.getElementById("openFileBtn");
+
+  function formatFileSize(bytes) {
+    if (!bytes) return "—";
+    if (bytes < 1024) return `${bytes} بایت`;
+    if (bytes < 1048576) return `${(bytes / 1024).toFixed(2)} کیلوبایت`;
+    return `${(bytes / 1048576).toFixed(2)} مگابایت`;
+  }
+  function getFileType(ext) {
+    return { txt: "متن ساده", docx: "مایکروسافت ورد", pdf: "پی دی اف" }[ext] || "ناشناخته";
+  }
+  function displayFileInfo(f) {
+    displayFileName.textContent = `فایل: ${f.name}`;
+    displayFileSize.textContent = `اندازه: ${formatFileSize(f.size)}`;
+    displayFileExt.textContent = `اکستنشن: ${f.ext}`;
+    displayFileType.textContent = `نوع: ${getFileType(f.ext)}`;
+    statusText.textContent = `آماده - ${f.name}`;
+    convertBTNs.forEach((b) => (b.disabled = false));
+  }
+  function showProcessing(msg) {
+    processingStatus.textContent = msg || "در حال پردازش...";
+    processingStatus.className = "processing-status active";
+    outputArea.classList.remove("active");
+  }
+  function showOutput(filePath, format) {
+    processingStatus.classList.remove("active");
+    processingStatus.className = "processing-status success";
+    outputContent.textContent = `فایل ${format.toUpperCase()} در مسیر زیر ذخیره شد:\n${filePath}`;
+    outputFormt.textContent = "فرمت: " + format.toUpperCase();
+    outputArea.classList.add("active");
+  }
+  function showError(msg) {
+    processingStatus.classList.remove("active");
+    processingStatus.className = "processing-status";
+    processingStatus.textContent = "خطا: " + msg;
+    processingStatus.style.display = "block";
+    processingStatus.style.background = "#ffebee";
+    processingStatus.style.color = "#c62828";
+  }
+
+  async function exportFile(format) {
+    if (!currentFile) return showError("فایلی بارگذاری نشده");
+    showProcessing("در حال تولید فایل...");
+    try {
+      const text = (await getTextFromDb()) || "";
+      if (!text.trim())
+        return showError("متنی برای خروجی وجود ندارد - ابتدا PDF را ویرایش کنید");
+
+      const result =
+        format === "docx"
+          ? await window.electronAPI.saveDocx(text, currentFile.name)
+          : await window.electronAPI.saveTxt(text, currentFile.name);
+
+      if (result.canceled) {
+        processingStatus.style.display = "none";
+        return;
+      }
+      if (!result.success) return showError(result.error || "خطا در ذخیره");
+      showOutput(result.filePath, format);
+    } catch (err) {
+      showError(err.message || String(err));
+    }
+  }
+
+  if (currentFile) displayFileInfo(currentFile);
+
+  convertBTNs.forEach((btn) => {
+    btn.addEventListener("click", () => exportFile(btn.dataset.format));
+  });
+
+  if (openFileBtn) {
+    openFileBtn.addEventListener("click", async () => {
+      await window.electronAPI.openFile();
+    });
+  }
+
+  document.addEventListener("keydown", async (e) => {
+    if (!e.ctrlKey || !e.shiftKey) return;
+    if (e.code === "KeyL") {
+      e.preventDefault();
+      exportFile("txt");
+    } else if (e.code === "KeyW") {
+      e.preventDefault();
+      exportFile("docx");
+    }
+  });
+
+  // اگر با میانبر از editor آمده باشیم
+  const pending = localStorage.getItem("pendingExport");
+  if (pending) {
+    localStorage.removeItem("pendingExport");
+    setTimeout(() => exportFile(pending), 300);
+  }
+})();
+
+    </script>
+  </body>
+</html>
