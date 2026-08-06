@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>در حال بارگذاری</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .loader {
+        width: 65px;
+        aspect-ratio: 1;
+        --g: radial-gradient(
+            farthest-side,
+            #0000 calc(95% - 3px),
+            #3a2a48 calc(100% - 3px) 98%,
+            #0000 101%
+          )
+          no-repeat;
+        background: var(--g), var(--g), var(--g);
+        background-size: 30px 30px;
+        animation: anim 1.5s infinite;
+      }
+
+      @keyframes anim {
+        0% {
+          background-position:
+            0 0,
+            0 100%,
+            100% 100%;
+        }
+        25% {
+          background-position:
+            100% 0,
+            0 100%,
+            100% 100%;
+        }
+        50% {
+          background-position:
+            100% 0,
+            0 0,
+            100% 100%;
+        }
+        75% {
+          background-position:
+            100% 0,
+            0 0,
+            0 100%;
+        }
+        100% {
+          background-position:
+            100% 100%,
+            0 0,
+            0 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loader"></div>
+  </body>
+</html>

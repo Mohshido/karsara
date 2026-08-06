@@ -181,7 +181,7 @@
   <body>
     <div class="upload-box">
       <header class="box-header">
-        <h2>فایل را اضافه کنید</h2>
+        <h2 aria-label="فایل را در قسمت زیر اضافه کنید">فایل را اضافه کنید</h2>
       </header>
       <form class="upload-content">
         <div class="file-input-wrapper">
@@ -193,14 +193,20 @@
             multiple
           />
           <div class="file-drop-zone" id="dropZone">
-            <span class="main-text">فایل خود را انتخاب کنید</span>
+            <span class="main-text" aria-label="اینجا کلیک کنید"
+              >فایل خود را انتخاب کنید</span
+            >
             <span class="sub-text">یا اینجا کلیک کنید</span>
           </div>
         </div>
         <div class="file-name-display" id="fileNameDisplay"></div>
 
         <button class="add-btn" id="addBtn">
-          <span class="font-size:1.1rem;font-weight:400;">افزودن</span>
+          <span
+            class="font-size:1.1rem;font-weight:400;"
+            aria-label="دکمه افزودن فایل"
+            >افزودن</span
+          >
           <span class="plus-icon">+</span>
         </button>
       </form>
@@ -222,6 +228,7 @@
 
         function showToast(txt) {
           toast.textContent = txt;
+          toast.setAttribute("aria-label", txt);
           toast.classList.add("show-toast");
           setTimeout(() => toast.classList.remove("show-toast"), 3000);
         }

@@ -439,24 +439,24 @@
           </div>
 
           <div class="shortcuts-section">
-            <div class="shortcut-title">
+            <div class="shortcut-title"  aria-label="میانبر های کیبرد">
               میانبر کیبورد
-              <span style="direction: ltr">(Ctrl + Shift + کلید)</span>
+              <span style="direction: ltr" >(Ctrl + Shift + کلید)</span>
             </div>
             <div class="shortcard-grid">
               <div class="shortcut-item">
-                <span>TXT</span>
-                <span class="key-combo"><kbd>Ctrl + Shift + L</kbd></span>
+                <span aria-label="تبدیل به متن ساده">TXT</span>
+                <span class="key-combo"  aria-label="Ctrl Shift L"><kbd>Ctrl + Shift + L</kbd></span>
               </div>
 
               <div class="shortcut-item">
-                <span>DOCX</span>
-                <span class="key-combo"><kbd>Ctrl + Shift + W</kbd></span>
+                <span aria-label="تبدیل به ورد">DOCX</span>
+                <span class="key-combo"  aria-label="Ctrl Shift W"><kbd>Ctrl + Shift + W</kbd></span>
               </div>
 
               <div class="shortcut-item">
-                <span>صوت</span>
-                <span class="key-combo"><kbd>Ctrl + Shift + P</kbd></span>
+                <span aria-label="تبدیل به صوت">صوت</span>
+                <span class="key-combo" aria-label="Ctrl Shift P"><kbd>Ctrl + Shift + P</kbd></span>
               </div>
             </div>
           </div>
@@ -469,6 +469,7 @@
                 margin-bottom: 0.6rem;
                 font-size: 0.9rem;
               "
+              aria-label="تبدیل"
             >
               تبدیل با دکمه
             </div>
@@ -477,6 +478,7 @@
                 class="convert-btn-ui"
                 data-format="txt"
                 data-shortcut="L"
+                aria-label="تبدیل به متن ساده"
               >
                 (TXT)
                 <span class="ext-icon">متن ساده</span>
@@ -486,6 +488,7 @@
                 class="convert-btn-ui"
                 data-format="docx"
                 data-shortcut="W"
+                aria-label="تبدیل به ورد"
               >
                 (DOCX)
                 <span class="ext-icon">مایکروسافت ورد</span>
@@ -531,24 +534,24 @@
               style="display: none"
             >
               <audio controls id="audioPlayer">
-                <source src="" type="audio/mpeg" />
+                <source src="" type="audio/mpeg" aria-label="مرورگر شما از پخش صدا پشتیبانی نمی کند" />
                 مرورگر شما از پخش صدا پشتیبانی نمی کند.
               </audio>
               <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem">
-                <button class="btn btn-success btn-sm" id="downloadAudioBtn">
+                <button class="btn btn-success btn-sm" id="downloadAudioBtn" aria-label="دانلود صوت">
                   دانلود صوت
                 </button>
               </div>
             </div>
           </div>
 
-          <div class="processing-status" id="processingStatus">
+          <div class="processing-status" id="processingStatus" aria-label="در حال پردازش">
             در حال پردازش...
           </div> 
 
           <div class="output-area" id="outputArea">
             <div class="output-header">
-              <span class="status">تبدیل انجام شد</span>
+              <span class="status" aria-label="تبدیل انجام شد">تبدیل انجام شد</span>
               <span style="font-size: 0.75rem; color: #88809c" id="outputFormt"
                 >فرمت: -</span
               >
@@ -557,7 +560,7 @@
             <div class="output-content" id="outputContent"></div>
 
             <div class="output-actions">
-              <button class="btn btn-success btn-sm" id="downloadOutputBtn">
+              <button class="btn btn-success btn-sm" id="downloadOutputBtn" aria-label="دانلود">
                 دانلود
               </button>
             </div>

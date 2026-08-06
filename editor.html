@@ -487,10 +487,20 @@
       <div class="toolbar">
         <!-- TTS -->
         <div class="toolbar-group">
-          <button class="tool-btn play-btn" id="playBtn" title="Ctrl+Shift+P">
+          <button
+            class="tool-btn play-btn"
+            id="playBtn"
+            title="Ctrl+Shift+P"
+            aria-label="پخش صدا"
+          >
             ▶ پخش صدا
           </button>
-          <button class="tool-btn stop-btn" id="stopBtn" title="Ctrl+Shift+Q">
+          <button
+            class="tool-btn stop-btn"
+            id="stopBtn"
+            title="Ctrl+Shift+Q"
+            aria-label="توقف صدا"
+          >
             ■ توقف
           </button>
           <span class="tts-status" id="ttsStatus">آماده</span>
@@ -498,17 +508,40 @@
 
         <!-- Text Tools -->
         <div class="toolbar-group">
-          <button class="tool-btn" id="fixTextBtn" title="اصلاح خودکار متن">
+          <button
+            class="tool-btn"
+            id="fixTextBtn"
+            title="اصلاح خودکار متن"
+            aria-label="اصلاح متن"
+          >
             🔧 اصلاح متن
           </button>
-          <button class="tool-btn" id="selectAllBtn">انتخاب همه</button>
-          <button class="tool-btn" id="clearBtn">پاک کردن</button>
+          <button class="tool-btn" id="selectAllBtn" aria-label="انتخاب همه">
+            انتخاب همه
+          </button>
+          <button class="tool-btn" id="clearBtn" aria-label="پاک کردن">
+            پاک کردن
+          </button>
         </div>
 
         <!-- Direction -->
         <div class="toolbar-group">
-          <button class="tool-btn" id="rtlBtn" title="راست به چپ">RTL ←</button>
-          <button class="tool-btn" id="ltrBtn" title="چپ به راست">→ LTR</button>
+          <button
+            class="tool-btn"
+            id="rtlBtn"
+            title="راست به چپ"
+            aria-label="راست به چپ"
+          >
+            RTL ←
+          </button>
+          <button
+            class="tool-btn"
+            id="ltrBtn"
+            title="چپ به راست"
+            aria-label="چپ به راست"
+          >
+            → LTR
+          </button>
         </div>
       </div>
 
@@ -547,42 +580,58 @@
           </div>
 
           <div class="sidebar-section">
-            <div class="sidebar-title">ابزارها</div>
-            <button class="fix-btn" id="fixBtn2">🔧 اصلاح فاصله‌گذاری</button>
+            <div class="sidebar-title" aria-label="ابزارها">ابزارها</div>
+            <button class="fix-btn" id="fixBtn2" aria-label="اصلاح فاصله گذاری">
+              🔧 اصلاح فاصله‌گذاری
+            </button>
           </div>
 
           <div class="sidebar-section">
-            <div class="sidebar-title">میانبرها</div>
+            <div class="sidebar-title" aria-label="میانبرها">میانبرها</div>
             <div class="shortcut-list">
               <div class="shortcut-row">
-                <span>انتخاب فایل</span>
-                <span class="key-badge">Ctrl+Shift+O</span>
+                <span aria-label="انتخاب فایل">انتخاب فایل</span>
+                <span class="key-badge" aria-label="Ctrl Shift O"
+                  >Ctrl+Shift+O</span
+                >
               </div>
               <div class="shortcut-row">
-                <span>پخش صدا</span>
-                <span class="key-badge">Ctrl+Shift+P</span>
+                <span aria-label="پخش صدا">پخش صدا</span>
+                <span class="key-badge" aria-label="Ctrl Shift P"
+                  >Ctrl+Shift+P</span
+                >
               </div>
               <div class="shortcut-row">
-                <span>توقف صدا</span>
-                <span class="key-badge">Ctrl+Shift+Q</span>
+                <span aria-label="توقف صدا">توقف صدا</span>
+                <span class="key-badge" aria-label="Ctrl Shift Q"
+                  >Ctrl+Shift+Q</span
+                >
               </div>
               <div class="shortcut-row">
-                <span>Paste + اصلاح</span>
-                <span class="key-badge">Ctrl+Shift+V</span>
+                <span aria-label="Paste + اصلاح">Paste + اصلاح</span>
+                <span class="key-badge" aria-label="Ctrl Shift V"
+                  >Ctrl+Shift+V</span
+                >
               </div>
               <div class="shortcut-row">
-                <span>خروجی DOCX</span>
-                <span class="key-badge">Ctrl+Shift+W</span>
+                <span aria-label="خروجی DOCX">خروجی DOCX</span>
+                <span class="key-badge" aria-label="Ctrl Shift W"
+                  >Ctrl+Shift+W</span
+                >
               </div>
               <div class="shortcut-row">
-                <span>خروجی TXT</span>
-                <span class="key-badge">Ctrl+Shift+L</span>
+                <span aria-label="خروجی TXT">خروجی TXT</span>
+                <span class="key-badge" aria-label="Ctrl Shift L"
+                  >Ctrl+Shift+L</span
+                >
               </div>
             </div>
           </div>
 
           <div class="sidebar-section" style="margin-top: auto">
-            <button class="next-btn" id="nextBtn">مرحله بعد ←</button>
+            <button class="next-btn" id="nextBtn" aria-label="مرحله بعد">
+              مرحله بعد ←
+            </button>
           </div>
         </div>
 
@@ -592,6 +641,7 @@
             id="editorTextarea"
             placeholder="متن استخراج‌شده از PDF اینجا نمایش داده می‌شود.&#10;می‌توانید متن را ویرایش کنید..."
             spellcheck="false"
+            aria-label="متن استخراج‌شده از PDF اینجا نمایش داده می‌شود.&#10;می‌توانید متن را ویرایش کنید"
           ></textarea>
         </div>
       </div>
@@ -609,361 +659,387 @@
     <div id="toast"></div>
 
     <script>
-(function () {
-  const textarea = document.getElementById("editorTextarea");
-  const loadingOverlay = document.getElementById("loadingOverlay");
-  const loadingText = document.getElementById("loadingText");
-  const statusDot = document.getElementById("statusDot");
-  const statusText = document.getElementById("statusText");
-  const ttsStatus = document.getElementById("ttsStatus");
-  const playBtn = document.getElementById("playBtn");
-  const stopBtn = document.getElementById("stopBtn");
-  const fixTextBtn = document.getElementById("fixTextBtn");
-  const fixBtn2 = document.getElementById("fixBtn2");
-  const selectAllBtn = document.getElementById("selectAllBtn");
-  const clearBtn = document.getElementById("clearBtn");
-  const rtlBtn = document.getElementById("rtlBtn");
-  const ltrBtn = document.getElementById("ltrBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const wordCount = document.getElementById("wordCount");
-  const charCount = document.getElementById("charCount");
-  const footerFile = document.getElementById("footerFile");
-  const footerWords = document.getElementById("footerWords");
-  const sideFileName = document.getElementById("sideFileName");
-  const sideFileSize = document.getElementById("sideFileSize");
-  const toast = document.getElementById("toast");
+      (function () {
+        const textarea = document.getElementById("editorTextarea");
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        const loadingText = document.getElementById("loadingText");
+        const statusDot = document.getElementById("statusDot");
+        const statusText = document.getElementById("statusText");
+        const ttsStatus = document.getElementById("ttsStatus");
+        const playBtn = document.getElementById("playBtn");
+        const stopBtn = document.getElementById("stopBtn");
+        const fixTextBtn = document.getElementById("fixTextBtn");
+        const fixBtn2 = document.getElementById("fixBtn2");
+        const selectAllBtn = document.getElementById("selectAllBtn");
+        const clearBtn = document.getElementById("clearBtn");
+        const rtlBtn = document.getElementById("rtlBtn");
+        const ltrBtn = document.getElementById("ltrBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        const wordCount = document.getElementById("wordCount");
+        const charCount = document.getElementById("charCount");
+        const footerFile = document.getElementById("footerFile");
+        const footerWords = document.getElementById("footerWords");
+        const sideFileName = document.getElementById("sideFileName");
+        const sideFileSize = document.getElementById("sideFileSize");
+        const toast = document.getElementById("toast");
 
-  let isPlaying = false;
-  let currentFileInfo = null;
-  let currentAudio = null;
-  let currentAudioUrl = null;
-  let stopRequested = false;
+        let isPlaying = false;
+        let currentFileInfo = null;
+        let currentAudio = null;
+        let currentAudioUrl = null;
+        let stopRequested = false;
 
-  function base64ToUint8Array(b64) {
-    const bin = atob(b64);
-    const arr = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-    return arr;
-  }
-
-  function showToast(msg, duration = 3000) {
-    toast.textContent = msg;
-    toast.classList.add("show-toast");
-    setTimeout(() => toast.classList.remove("show-toast"), duration);
-  }
-  function showLoading(msg) {
-    loadingText.textContent = msg;
-    loadingOverlay.classList.remove("hidden");
-  }
-  function hideLoading() {
-    loadingOverlay.classList.add("hidden");
-  }
-  function setStatus(msg, state = "ok") {
-    statusText.textContent = msg;
-    statusDot.className = "dot";
-    if (state === "loading") statusDot.classList.add("loading");
-    if (state === "error") statusDot.classList.add("error");
-  }
-
-  function getFileFromDB() {
-    return new Promise((res, rej) => {
-      const req = indexedDB.open("FileDB", 1);
-      req.onerror = (e) => rej(e.target.error);
-      req.onsuccess = (e) => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains("files"))
-          return rej("فایلی وجود ندارد");
-        const tx = db.transaction(["files"], "readonly");
-        const store = tx.objectStore("files");
-        const get = store.get("currentPDF");
-        get.onsuccess = (e) =>
-          e.target.result ? res(e.target.result) : rej("PDF پیدا نشد");
-        get.onerror = (e) => rej(e.target.error);
-      };
-    });
-  }
-
-  function saveTextToDB(text) {
-    return new Promise((res, rej) => {
-      const req = indexedDB.open("FileDB", 1);
-      req.onerror = (e) => rej(e.target.error);
-      req.onsuccess = (e) => {
-        const db = e.target.result;
-        const tx = db.transaction(["files"], "readwrite");
-        const store = tx.objectStore("files");
-        const getReq = store.get("currentPDF");
-        getReq.onsuccess = (ev) => {
-          const data = ev.target.result;
-          if (data) {
-            data.extractedText = text;
-            store.put(data);
-          }
-          res();
-        };
-        getReq.onerror = (e) => rej(e.target.error);
-      };
-    });
-  }
-
-  function formatSize(bytes) {
-    if (bytes < 1024) return `${bytes} بایت`;
-    if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} کیلوبایت`;
-    return `${(bytes / 1048576).toFixed(1)} مگابایت`;
-  }
-
-  function updateStats() {
-    const text = textarea.value;
-    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-    const chars = text.length;
-    wordCount.textContent = words.toLocaleString("fa");
-    charCount.textContent = chars.toLocaleString("fa");
-    footerWords.textContent = `کلمات: ${words.toLocaleString("fa")}`;
-  }
-
-  function fixPersianText(text) {
-    let t = text;
-    t = t.replace(/\bمی ([^\s])/g, "می‌$1");
-    t = t.replace(/\bنمی ([^\s])/g, "نمی‌$1");
-    t = t.replace(/\bبی ([^\s])/g, "بی‌$1");
-    t = t.replace(/\s+([،؛:.!?])/g, "$1");
-    t = t.replace(/([،؛:.!?])([^\s\n])/g, "$1 $2");
-    t = t.replace(/[ \t]+/g, " ");
-    t = t.replace(/\n{3,}/g, "\n\n");
-    const en = { 0:"۰",1:"۱",2:"۲",3:"۳",4:"۴",5:"۵",6:"۶",7:"۷",8:"۸",9:"۹" };
-    t = t.replace(/[0-9]/g, (d) => en[d]);
-    t = t.replace(/"/g, "«").replace(/"/g, "»");
-    return t.trim();
-  }
-
-  async function extractTextFromPDF(fileData) {
-    return new Promise((res, rej) => {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        try {
-          const result = await window.electronAPI.extractPDF(e.target.result);
-          if (result.success) res(result.text);
-          else rej(result.error);
-        } catch (err) {
-          rej(err);
+        function base64ToUint8Array(b64) {
+          const bin = atob(b64);
+          const arr = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+          return arr;
         }
-      };
-      reader.onerror = () => rej("خطا در خواندن فایل");
-      reader.readAsArrayBuffer(fileData);
-    });
-  }
 
-  // ─── TTS via WebAudio در رندر ───
-  async function playAudioBuffer(b64) {
-    const bytes = base64ToUint8Array(b64);
-    const blob = new Blob([bytes], { type: "audio/wav" });
-    cleanupAudio();
-    currentAudioUrl = URL.createObjectURL(blob);
-    currentAudio = new Audio(currentAudioUrl);
-    return new Promise((resolve, reject) => {
-      currentAudio.onended = () => { cleanupAudio(); resolve(); };
-      currentAudio.onerror = () => { cleanupAudio(); reject(new Error("خطا در پخش")); };
-      currentAudio.play().catch(reject);
-    });
-  }
+        function showToast(msg, duration = 3000) {
+          toast.textContent = msg;
+          toast.classList.add("show-toast");
+          setTimeout(() => toast.classList.remove("show-toast"), duration);
+        }
+        function showLoading(msg) {
+          loadingText.textContent = msg;
+          loadingOverlay.classList.remove("hidden");
+        }
+        function hideLoading() {
+          loadingOverlay.classList.add("hidden");
+        }
+        function setStatus(msg, state = "ok") {
+          statusText.textContent = msg;
+          statusDot.className = "dot";
+          if (state === "loading") statusDot.classList.add("loading");
+          if (state === "error") statusDot.classList.add("error");
+        }
 
-  function cleanupAudio() {
-    if (currentAudioUrl) {
-      try { URL.revokeObjectURL(currentAudioUrl); } catch (e) {}
-      currentAudioUrl = null;
-    }
-    currentAudio = null;
-  }
+        function getFileFromDB() {
+          return new Promise((res, rej) => {
+            const req = indexedDB.open("FileDB", 1);
+            req.onerror = (e) => rej(e.target.error);
+            req.onsuccess = (e) => {
+              const db = e.target.result;
+              if (!db.objectStoreNames.contains("files"))
+                return rej("فایلی وجود ندارد");
+              const tx = db.transaction(["files"], "readonly");
+              const store = tx.objectStore("files");
+              const get = store.get("currentPDF");
+              get.onsuccess = (e) =>
+                e.target.result ? res(e.target.result) : rej("PDF پیدا نشد");
+              get.onerror = (e) => rej(e.target.error);
+            };
+          });
+        }
 
-  async function playText() {
-    const text = textarea.value.trim();
-    if (!text) return showToast("متنی برای پخش وجود ندارد");
-    if (isPlaying) return showToast("در حال پخش است");
+        function saveTextToDB(text) {
+          return new Promise((res, rej) => {
+            const req = indexedDB.open("FileDB", 1);
+            req.onerror = (e) => rej(e.target.error);
+            req.onsuccess = (e) => {
+              const db = e.target.result;
+              const tx = db.transaction(["files"], "readwrite");
+              const store = tx.objectStore("files");
+              const getReq = store.get("currentPDF");
+              getReq.onsuccess = (ev) => {
+                const data = ev.target.result;
+                if (data) {
+                  data.extractedText = text;
+                  store.put(data);
+                }
+                res();
+              };
+              getReq.onerror = (e) => rej(e.target.error);
+            };
+          });
+        }
 
-    const selected = textarea.value
-      .substring(textarea.selectionStart, textarea.selectionEnd)
-      .trim();
-    const toSpeak = selected || text;
+        function formatSize(bytes) {
+          if (bytes < 1024) return `${bytes} بایت`;
+          if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} کیلوبایت`;
+          return `${(bytes / 1048576).toFixed(1)} مگابایت`;
+        }
 
-    try {
-      isPlaying = true;
-      stopRequested = false;
-      ttsStatus.textContent = "در حال آماده‌سازی صدا...";
-      ttsStatus.className = "tts-status playing";
-      playBtn.disabled = true;
-      stopBtn.disabled = false;
+        function updateStats() {
+          const text = textarea.value;
+          const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+          const chars = text.length;
+          wordCount.textContent = words.toLocaleString("fa");
+          charCount.textContent = chars.toLocaleString("fa");
+          footerWords.textContent = `کلمات: ${words.toLocaleString("fa")}`;
+        }
 
-      const result = await window.electronAPI.speakText(toSpeak);
-      if (!result?.success) throw new Error(result?.error || "خطا در TTS");
-      if (stopRequested) return;
-      await playAudioBuffer(result.buffer);
+        function fixPersianText(text) {
+          let t = text;
+          t = t.replace(/\bمی ([^\s])/g, "می‌$1");
+          t = t.replace(/\bنمی ([^\s])/g, "نمی‌$1");
+          t = t.replace(/\bبی ([^\s])/g, "بی‌$1");
+          t = t.replace(/\s+([،؛:.!?])/g, "$1");
+          t = t.replace(/([،؛:.!?])([^\s\n])/g, "$1 $2");
+          t = t.replace(/[ \t]+/g, " ");
+          t = t.replace(/\n{3,}/g, "\n\n");
+          const en = {
+            0: "۰",
+            1: "۱",
+            2: "۲",
+            3: "۳",
+            4: "۴",
+            5: "۵",
+            6: "۶",
+            7: "۷",
+            8: "۸",
+            9: "۹",
+          };
+          t = t.replace(/[0-9]/g, (d) => en[d]);
+          t = t.replace(/"/g, "«").replace(/"/g, "»");
+          return t.trim();
+        }
 
-      if (!stopRequested) {
-        ttsStatus.textContent = "پخش تمام شد";
-        setTimeout(() => {
-          ttsStatus.textContent = "آماده";
+        async function extractTextFromPDF(fileData) {
+          return new Promise((res, rej) => {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+              try {
+                const result = await window.electronAPI.extractPDF(
+                  e.target.result,
+                );
+                if (result.success) res(result.text);
+                else rej(result.error);
+              } catch (err) {
+                rej(err);
+              }
+            };
+            reader.onerror = () => rej("خطا در خواندن فایل");
+            reader.readAsArrayBuffer(fileData);
+          });
+        }
+
+        // ─── TTS via WebAudio در رندر ───
+        async function playAudioBuffer(b64) {
+          const bytes = base64ToUint8Array(b64);
+          const blob = new Blob([bytes], { type: "audio/wav" });
+          cleanupAudio();
+          currentAudioUrl = URL.createObjectURL(blob);
+          currentAudio = new Audio(currentAudioUrl);
+          return new Promise((resolve, reject) => {
+            currentAudio.onended = () => {
+              cleanupAudio();
+              resolve();
+            };
+            currentAudio.onerror = () => {
+              cleanupAudio();
+              reject(new Error("خطا در پخش"));
+            };
+            currentAudio.play().catch(reject);
+          });
+        }
+
+        function cleanupAudio() {
+          if (currentAudioUrl) {
+            try {
+              URL.revokeObjectURL(currentAudioUrl);
+            } catch (e) {}
+            currentAudioUrl = null;
+          }
+          currentAudio = null;
+        }
+
+        async function playText() {
+          const text = textarea.value.trim();
+          if (!text) return showToast("متنی برای پخش وجود ندارد");
+          if (isPlaying) return showToast("در حال پخش است");
+
+          const selected = textarea.value
+            .substring(textarea.selectionStart, textarea.selectionEnd)
+            .trim();
+          const toSpeak = selected || text;
+
+          try {
+            isPlaying = true;
+            stopRequested = false;
+            ttsStatus.textContent = "در حال آماده‌سازی صدا...";
+            ttsStatus.className = "tts-status playing";
+            playBtn.disabled = true;
+            stopBtn.disabled = false;
+
+            const result = await window.electronAPI.speakText(toSpeak);
+            if (!result?.success)
+              throw new Error(result?.error || "خطا در TTS");
+            if (stopRequested) return;
+            await playAudioBuffer(result.buffer);
+
+            if (!stopRequested) {
+              ttsStatus.textContent = "پخش تمام شد";
+              setTimeout(() => {
+                ttsStatus.textContent = "آماده";
+                ttsStatus.className = "tts-status";
+              }, 1500);
+            }
+          } catch (err) {
+            console.error(err);
+            ttsStatus.textContent = "خطا در پخش";
+            showToast("خطا در پخش صدا: " + (err.message || err));
+          } finally {
+            isPlaying = false;
+            playBtn.disabled = false;
+            stopBtn.disabled = false;
+          }
+        }
+
+        async function stopText() {
+          stopRequested = true;
+          if (currentAudio) {
+            try {
+              currentAudio.pause();
+              currentAudio.currentTime = 0;
+            } catch (e) {}
+            cleanupAudio();
+          }
+          try {
+            await window.electronAPI.stopSpeak();
+          } catch (e) {}
+          isPlaying = false;
+          ttsStatus.textContent = "متوقف شد";
           ttsStatus.className = "tts-status";
-        }, 1500);
-      }
-    } catch (err) {
-      console.error(err);
-      ttsStatus.textContent = "خطا در پخش";
-      showToast("خطا در پخش صدا: " + (err.message || err));
-    } finally {
-      isPlaying = false;
-      playBtn.disabled = false;
-      stopBtn.disabled = false;
-    }
-  }
+          playBtn.disabled = false;
+          stopBtn.disabled = false;
+        }
 
-  async function stopText() {
-    stopRequested = true;
-    if (currentAudio) {
-      try { currentAudio.pause(); currentAudio.currentTime = 0; } catch (e) {}
-      cleanupAudio();
-    }
-    try { await window.electronAPI.stopSpeak(); } catch (e) {}
-    isPlaying = false;
-    ttsStatus.textContent = "متوقف شد";
-    ttsStatus.className = "tts-status";
-    playBtn.disabled = false;
-    stopBtn.disabled = false;
-  }
+        async function pasteAndFix() {
+          try {
+            const clipText = await navigator.clipboard.readText();
+            if (!clipText) return showToast("کلیپبورد خالی است");
+            const fixed = fixPersianText(clipText);
+            const start = textarea.selectionStart;
+            textarea.value =
+              textarea.value.substring(0, start) +
+              fixed +
+              textarea.value.substring(textarea.selectionEnd);
+            updateStats();
+            showToast("paste شد، در حال پخش...");
+            await playText();
+          } catch (err) {
+            showToast("خطا در paste: " + err.message);
+          }
+        }
 
-  async function pasteAndFix() {
-    try {
-      const clipText = await navigator.clipboard.readText();
-      if (!clipText) return showToast("کلیپبورد خالی است");
-      const fixed = fixPersianText(clipText);
-      const start = textarea.selectionStart;
-      textarea.value =
-        textarea.value.substring(0, start) +
-        fixed +
-        textarea.value.substring(textarea.selectionEnd);
-      updateStats();
-      showToast("paste شد، در حال پخش...");
-      await playText();
-    } catch (err) {
-      showToast("خطا در paste: " + err.message);
-    }
-  }
+        async function init() {
+          showLoading("در حال بارگذاری فایل PDF...");
+          setStatus("در حال بارگذاری...", "loading");
+          try {
+            const rec = await getFileFromDB();
+            currentFileInfo = rec;
+            sideFileName.textContent = rec.name;
+            sideFileName.title = rec.name;
+            sideFileSize.textContent = formatSize(rec.size);
+            footerFile.textContent = `فایل: ${rec.name}`;
 
-  async function init() {
-    showLoading("در حال بارگذاری فایل PDF...");
-    setStatus("در حال بارگذاری...", "loading");
-    try {
-      const rec = await getFileFromDB();
-      currentFileInfo = rec;
-      sideFileName.textContent = rec.name;
-      sideFileName.title = rec.name;
-      sideFileSize.textContent = formatSize(rec.size);
-      footerFile.textContent = `فایل: ${rec.name}`;
+            if (rec.extractedText) {
+              textarea.value = rec.extractedText;
+              updateStats();
+              hideLoading();
+              setStatus(rec.name, "ok");
+              return;
+            }
 
-      if (rec.extractedText) {
-        textarea.value = rec.extractedText;
-        updateStats();
-        hideLoading();
-        setStatus(rec.name, "ok");
-        return;
-      }
+            loadingText.textContent = "در حال استخراج متن از PDF...";
+            const text = await extractTextFromPDF(rec.file);
+            textarea.value = text || "";
+            updateStats();
+            await saveTextToDB(text);
+            hideLoading();
+            setStatus(rec.name, "ok");
+            showToast("متن با موفقیت استخراج شد");
+          } catch (err) {
+            hideLoading();
+            setStatus("خطا در بارگذاری", "error");
+            textarea.value = "";
+            showToast("خطا: " + err);
+            console.error(err);
+          }
+        }
 
-      loadingText.textContent = "در حال استخراج متن از PDF...";
-      const text = await extractTextFromPDF(rec.file);
-      textarea.value = text || "";
-      updateStats();
-      await saveTextToDB(text);
-      hideLoading();
-      setStatus(rec.name, "ok");
-      showToast("متن با موفقیت استخراج شد");
-    } catch (err) {
-      hideLoading();
-      setStatus("خطا در بارگذاری", "error");
-      textarea.value = "";
-      showToast("خطا: " + err);
-      console.error(err);
-    }
-  }
+        textarea.addEventListener("input", updateStats);
+        playBtn.addEventListener("click", playText);
+        stopBtn.addEventListener("click", stopText);
+        fixTextBtn.addEventListener("click", () => {
+          textarea.value = fixPersianText(textarea.value);
+          updateStats();
+          showToast("متن اصلاح شد");
+        });
+        fixBtn2.addEventListener("click", () => {
+          textarea.value = fixPersianText(textarea.value);
+          updateStats();
+          showToast("فاصله‌گذاری اصلاح شد");
+        });
+        selectAllBtn.addEventListener("click", () => textarea.select());
+        clearBtn.addEventListener("click", () => {
+          if (confirm("متن پاک شود؟")) {
+            textarea.value = "";
+            updateStats();
+          }
+        });
+        rtlBtn.addEventListener("click", () => {
+          textarea.style.direction = "rtl";
+          textarea.style.textAlign = "right";
+        });
+        ltrBtn.addEventListener("click", () => {
+          textarea.style.direction = "ltr";
+          textarea.style.textAlign = "left";
+        });
+        nextBtn.addEventListener("click", async () => {
+          await saveTextToDB(textarea.value);
+          location.href = "workSpace.html";
+        });
 
-  textarea.addEventListener("input", updateStats);
-  playBtn.addEventListener("click", playText);
-  stopBtn.addEventListener("click", stopText);
-  fixTextBtn.addEventListener("click", () => {
-    textarea.value = fixPersianText(textarea.value);
-    updateStats();
-    showToast("متن اصلاح شد");
-  });
-  fixBtn2.addEventListener("click", () => {
-    textarea.value = fixPersianText(textarea.value);
-    updateStats();
-    showToast("فاصله‌گذاری اصلاح شد");
-  });
-  selectAllBtn.addEventListener("click", () => textarea.select());
-  clearBtn.addEventListener("click", () => {
-    if (confirm("متن پاک شود؟")) {
-      textarea.value = "";
-      updateStats();
-    }
-  });
-  rtlBtn.addEventListener("click", () => {
-    textarea.style.direction = "rtl";
-    textarea.style.textAlign = "right";
-  });
-  ltrBtn.addEventListener("click", () => {
-    textarea.style.direction = "ltr";
-    textarea.style.textAlign = "left";
-  });
-  nextBtn.addEventListener("click", async () => {
-    await saveTextToDB(textarea.value);
-    location.href = "workSpace.html";
-  });
+        document.addEventListener("keydown", async (e) => {
+          if (!e.ctrlKey || !e.shiftKey) return;
+          switch (e.code) {
+            case "KeyO":
+              e.preventDefault();
+              await window.electronAPI.openFile();
+              break;
+            case "KeyP":
+              e.preventDefault();
+              playText();
+              break;
+            case "KeyQ":
+              e.preventDefault();
+              stopText();
+              break;
+            case "KeyV":
+              e.preventDefault();
+              pasteAndFix();
+              break;
+            case "KeyW":
+              e.preventDefault();
+              await saveTextToDB(textarea.value);
+              localStorage.setItem("pendingExport", "docx");
+              location.href = "workSpace.html";
+              break;
+            case "KeyL":
+              e.preventDefault();
+              await saveTextToDB(textarea.value);
+              localStorage.setItem("pendingExport", "txt");
+              location.href = "workSpace.html";
+              break;
+          }
+        });
 
-  document.addEventListener("keydown", async (e) => {
-    if (!e.ctrlKey || !e.shiftKey) return;
-    switch (e.code) {
-      case "KeyO":
-        e.preventDefault();
-        await window.electronAPI.openFile();
-        break;
-      case "KeyP":
-        e.preventDefault();
-        playText();
-        break;
-      case "KeyQ":
-        e.preventDefault();
-        stopText();
-        break;
-      case "KeyV":
-        e.preventDefault();
-        pasteAndFix();
-        break;
-      case "KeyW":
-        e.preventDefault();
-        await saveTextToDB(textarea.value);
-        localStorage.setItem("pendingExport", "docx");
-        location.href = "workSpace.html";
-        break;
-      case "KeyL":
-        e.preventDefault();
-        await saveTextToDB(textarea.value);
-        localStorage.setItem("pendingExport", "txt");
-        location.href = "workSpace.html";
-        break;
-    }
-  });
+        if (window.electronAPI?.onTTSDone) {
+          window.electronAPI.onTTSDone(() => {
+            isPlaying = false;
+            ttsStatus.textContent = "آماده";
+            ttsStatus.className = "tts-status";
+            playBtn.disabled = false;
+            stopBtn.disabled = false;
+            cleanupAudio();
+          });
+        }
 
-  if (window.electronAPI?.onTTSDone) {
-    window.electronAPI.onTTSDone(() => {
-      isPlaying = false;
-      ttsStatus.textContent = "آماده";
-      ttsStatus.className = "tts-status";
-      playBtn.disabled = false;
-      stopBtn.disabled = false;
-      cleanupAudio();
-    });
-  }
-
-  init();
-})();
-
+        init();
+      })();
     </script>
   </body>
 </html>
