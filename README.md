@@ -62,7 +62,9 @@ Please read our contribution guidelines before submitting changes.
 
 License
 
-License information will be announced soon.
+Karsara is licensed under the GNU General Public License v3.0.
+
+See the [LICENSE](LICENSE) file for details..
 
 ---
 
