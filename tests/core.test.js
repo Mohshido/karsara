@@ -141,6 +141,24 @@ test("missing document is a failed save, not success", async () => {
 });
 test("page scripts parse and CSP hashes match the embedded styles", () => {
   const crypto = require("node:crypto");
+  function assertStyleHashes(html, label) {
+    const policy = html.match(
+      /http-equiv="Content-Security-Policy" content="([^"]+)"/,
+    );
+    assert.ok(policy, `${label}: missing CSP`);
+    const styles = [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)];
+    assert.ok(styles.length, `${label}: missing embedded styles`);
+    for (const match of styles) {
+      // HTML parsing normalizes CRLF and CR to LF before CSP hashes the DOM text.
+      // https://html.spec.whatwg.org/multipage/parsing.html#preprocessing-the-input-stream
+      const style = match[1].replace(/\r\n?/g, "\n");
+      const hash = crypto.createHash("sha256").update(style).digest("base64");
+      assert.ok(
+        policy[1].includes(`'sha256-${hash}'`),
+        `${label}: CSP style hash does not match`,
+      );
+    }
+  }
   for (const file of [
     "main.js",
     "preload.js",
@@ -154,14 +172,19 @@ test("page scripts parse and CSP hashes match the embedded styles", () => {
   for (const file of ["editor.html", "workSpace.html", "uploadFile.html"]) {
     const html = fs.readFileSync(file, "utf8");
     assert.equal(/<script>/.test(html), false);
-    for (const match of html.matchAll(/<style>([\s\S]*?)<\/style>/g)) {
-      assert.ok(
-        html.includes(
-          "sha256-" +
-            crypto.createHash("sha256").update(match[1]).digest("base64"),
-        ),
-      );
+    const normalized = html.replace(/\r\n?/g, "\n");
+    for (const [name, source] of [
+      ["checkout", html],
+      ["LF", normalized],
+      ["CRLF", normalized.replace(/\n/g, "\r\n")],
+      ["CR", normalized.replace(/\n/g, "\r")],
+    ]) {
+      assertStyleHashes(source, `${file} (${name})`);
     }
+    assert.throws(
+      () => assertStyleHashes(html.replace("<style>", "<style>/* changed */"), file),
+      /CSP style hash does not match/,
+    );
   }
 });
 test("IPC refuses untrusted senders and invalid payloads; jobs are cancelled on stop", async () => {

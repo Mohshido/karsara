@@ -1,0 +1,2 @@
+# Keep embedded style sources stable across Windows and Unix checkouts.
+*.html text eol=lf
