@@ -5,16 +5,18 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --win"
+    "build": "electron-builder --win --publish never",
+    "test": "node --test tests/*.test.js",
+    "test:smoke": "electron tests/electron-smoke.js"
   },
   "dependencies": {
     "docx": "^9.7.1",
-    "pdf-parse": "^1.1.1",
+    "pdf-parse": "^2.4.5",
     "sherpa-onnx-node": "^1.13.4"
   },
   "devDependencies": {
-    "electron": "^28.0.0",
-    "electron-builder": "^24.0.0"
+    "electron": "^43.8.6",
+    "electron-builder": "^26.18.0"
   },
   "build": {
     "appId": "com.mohshid.karsra",
@@ -22,6 +24,34 @@
     "win": {
       "target": "nsis",
       "icon": "assets/icon.png"
-    }
+    },
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "processor.js",
+      "validation.js",
+      "wav.js",
+      "shared.js",
+      "uploadFile.html",
+      "uploadFile.js",
+      "editor.html",
+      "editor.js",
+      "workSpace.html",
+      "workSpace.js",
+      "accessibility.css",
+      "assets/**/*",
+      "package.json",
+      "LICENSE"
+    ],
+    "extraResources": [
+      {
+        "from": "models",
+        "to": "models"
+      }
+    ],
+    "asarUnpack": [
+      "node_modules/sherpa-onnx*/**/*"
+    ]
   }
 }

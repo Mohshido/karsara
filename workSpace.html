@@ -2,6 +2,8 @@
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'sha256-PhlORqEY3vqJJYfxhHUZM/TUOlO6oIoZMSk2s+7RXHM='; style-src-attr 'unsafe-inline'; img-src 'self' data:; media-src blob:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'" />
+    <link rel="stylesheet" href="accessibility.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>کارسرا</title>
     <style>
@@ -420,7 +422,7 @@
         >
           <div class="file-status">
             <span class="dot"></span>
-            <span id="statusText"></span>
+            <span id="statusText" role="status" aria-live="polite" aria-atomic="true"></span>
           </div>
         </div>
       </header>
@@ -428,6 +430,7 @@
       <div class="workspace-body">
         <div class="card">
           <div class="card-title">تبدیل فایل</div>
+          <button id="openFileBtn">انتخاب فایل PDF جدید</button>
 
           <div class="file-preview" id="filePreview">
             <div class="file-name" id="displayFileName">نام فایل: -</div>
@@ -455,8 +458,8 @@
               </div>
 
               <div class="shortcut-item">
-                <span aria-label="تبدیل به صوت">صوت</span>
-                <span class="key-combo" aria-label="Ctrl Shift P"><kbd>Ctrl + Shift + P</kbd></span>
+                <span>بازگشت به ویرایشگر برای پخش صوت</span>
+                <a href="editor.html">ویرایشگر و پخش صوت</a>
               </div>
             </div>
           </div>
@@ -545,7 +548,7 @@
             </div>
           </div>
 
-          <div class="processing-status" id="processingStatus" aria-label="در حال پردازش">
+          <div class="processing-status" id="processingStatus" role="status" aria-live="polite" aria-atomic="true" aria-label="در حال پردازش">
             در حال پردازش...
           </div> 
 
@@ -560,8 +563,8 @@
             <div class="output-content" id="outputContent"></div>
 
             <div class="output-actions">
-              <button class="btn btn-success btn-sm" id="downloadOutputBtn" aria-label="دانلود">
-                دانلود
+              <button class="btn btn-success btn-sm" id="downloadOutputBtn" aria-label="نمایش فایل ذخیره شده">
+                نمایش فایل ذخیره شده
               </button>
             </div>
           </div>
@@ -569,162 +572,7 @@
       </div>
     </div>
 
-    <script>
-(async function () {
-  function getFIlefromDb() {
-    return new Promise((res, rej) => {
-      const req = indexedDB.open("FileDB", 1);
-      req.onerror = (e) => rej(e.target.error);
-      req.onsuccess = (e) => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains("files"))
-          return rej("file وجود ندارد");
-        const tx = db.transaction(["files"], "readonly");
-        const store = tx.objectStore("files");
-        const getReq = store.get("currentPDF");
-        getReq.onsuccess = (e) =>
-          e.target.result ? res(e.target.result) : rej("پیدا نشد");
-        getReq.onerror = (e) => rej(e.target.error);
-      };
-    });
-  }
-
-  function getTextFromDb(record) {
-    return new Promise((res, rej) => {
-      const req = indexedDB.open("FileDB", 1);
-      req.onsuccess = (e) => {
-        const db = e.target.result;
-        const tx = db.transaction(["files"], "readonly");
-        const store = tx.objectStore("files");
-        const getReq = store.get("currentPDF");
-        getReq.onsuccess = (ev) => {
-          const data = ev.target.result;
-          res(data?.extractedText || "");
-        };
-        getReq.onerror = (e) => rej(e.target.error);
-      };
-      req.onerror = (e) => rej(e.target.error);
-    });
-  }
-
-  let currentFile = null;
-  try {
-    const file = await getFIlefromDb();
-    currentFile = {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      ext: file.name.split(".").pop().toLowerCase(),
-    };
-  } catch (err) {
-    document.getElementById("statusText").textContent = "خطا در خواندن فایل";
-  }
-
-  const displayFileName = document.getElementById("displayFileName");
-  const displayFileSize = document.getElementById("displayFileSize");
-  const displayFileExt = document.getElementById("displayFileExt");
-  const displayFileType = document.getElementById("displayFileType");
-  const statusText = document.getElementById("statusText");
-  const convertBTNs = document.querySelectorAll(".convert-btn-ui");
-  const processingStatus = document.getElementById("processingStatus");
-  const outputArea = document.getElementById("outputArea");
-  const outputContent = document.getElementById("outputContent");
-  const outputFormt = document.getElementById("outputFormt");
-  const openFileBtn = document.getElementById("openFileBtn");
-
-  function formatFileSize(bytes) {
-    if (!bytes) return "—";
-    if (bytes < 1024) return `${bytes} بایت`;
-    if (bytes < 1048576) return `${(bytes / 1024).toFixed(2)} کیلوبایت`;
-    return `${(bytes / 1048576).toFixed(2)} مگابایت`;
-  }
-  function getFileType(ext) {
-    return { txt: "متن ساده", docx: "مایکروسافت ورد", pdf: "پی دی اف" }[ext] || "ناشناخته";
-  }
-  function displayFileInfo(f) {
-    displayFileName.textContent = `فایل: ${f.name}`;
-    displayFileSize.textContent = `اندازه: ${formatFileSize(f.size)}`;
-    displayFileExt.textContent = `اکستنشن: ${f.ext}`;
-    displayFileType.textContent = `نوع: ${getFileType(f.ext)}`;
-    statusText.textContent = `آماده - ${f.name}`;
-    convertBTNs.forEach((b) => (b.disabled = false));
-  }
-  function showProcessing(msg) {
-    processingStatus.textContent = msg || "در حال پردازش...";
-    processingStatus.className = "processing-status active";
-    outputArea.classList.remove("active");
-  }
-  function showOutput(filePath, format) {
-    processingStatus.classList.remove("active");
-    processingStatus.className = "processing-status success";
-    outputContent.textContent = `فایل ${format.toUpperCase()} در مسیر زیر ذخیره شد:\n${filePath}`;
-    outputFormt.textContent = "فرمت: " + format.toUpperCase();
-    outputArea.classList.add("active");
-  }
-  function showError(msg) {
-    processingStatus.classList.remove("active");
-    processingStatus.className = "processing-status";
-    processingStatus.textContent = "خطا: " + msg;
-    processingStatus.style.display = "block";
-    processingStatus.style.background = "#ffebee";
-    processingStatus.style.color = "#c62828";
-  }
-
-  async function exportFile(format) {
-    if (!currentFile) return showError("فایلی بارگذاری نشده");
-    showProcessing("در حال تولید فایل...");
-    try {
-      const text = (await getTextFromDb()) || "";
-      if (!text.trim())
-        return showError("متنی برای خروجی وجود ندارد - ابتدا PDF را ویرایش کنید");
-
-      const result =
-        format === "docx"
-          ? await window.electronAPI.saveDocx(text, currentFile.name)
-          : await window.electronAPI.saveTxt(text, currentFile.name);
-
-      if (result.canceled) {
-        processingStatus.style.display = "none";
-        return;
-      }
-      if (!result.success) return showError(result.error || "خطا در ذخیره");
-      showOutput(result.filePath, format);
-    } catch (err) {
-      showError(err.message || String(err));
-    }
-  }
-
-  if (currentFile) displayFileInfo(currentFile);
-
-  convertBTNs.forEach((btn) => {
-    btn.addEventListener("click", () => exportFile(btn.dataset.format));
-  });
-
-  if (openFileBtn) {
-    openFileBtn.addEventListener("click", async () => {
-      await window.electronAPI.openFile();
-    });
-  }
-
-  document.addEventListener("keydown", async (e) => {
-    if (!e.ctrlKey || !e.shiftKey) return;
-    if (e.code === "KeyL") {
-      e.preventDefault();
-      exportFile("txt");
-    } else if (e.code === "KeyW") {
-      e.preventDefault();
-      exportFile("docx");
-    }
-  });
-
-  // اگر با میانبر از editor آمده باشیم
-  const pending = localStorage.getItem("pendingExport");
-  if (pending) {
-    localStorage.removeItem("pendingExport");
-    setTimeout(() => exportFile(pending), 300);
-  }
-})();
-
-    </script>
+    <script src="shared.js"></script>
+    <script src="workSpace.js"></script>
   </body>
 </html>
