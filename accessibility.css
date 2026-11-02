@@ -1,0 +1,14 @@
+:focus-visible {
+  outline: 3px solid #1468c4 !important;
+  outline-offset: 3px;
+}
+.file-input-wrapper:focus-within .file-drop-zone {
+  outline: 3px solid #1468c4;
+  outline-offset: 3px;
+}
+@media (forced-colors: active) {
+  :focus-visible,
+  .file-input-wrapper:focus-within .file-drop-zone {
+    outline: 3px solid Highlight !important;
+  }
+}

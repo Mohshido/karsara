@@ -2,6 +2,8 @@
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'sha256-Lpip/znqiqrsHFb89kkJogi0nvSXQY+kZLbvssHD6uc='; style-src-attr 'unsafe-inline'; img-src 'self' data:; media-src blob:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'" />
+    <link rel="stylesheet" href="accessibility.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>آپلود فایل</title>
     <style>
@@ -190,7 +192,7 @@
             name="file-input"
             id="fileInput"
             accept=".pdf"
-            multiple
+            aria-label="انتخاب یک فایل PDF"
           />
           <div class="file-drop-zone" id="dropZone">
             <span class="main-text" aria-label="اینجا کلیک کنید"
@@ -211,222 +213,9 @@
         </button>
       </form>
     </div>
-    <div id="toast"></div>
+    <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-    <script>
-      (function () {
-        const fileIpt = document.getElementById("fileInput");
-        const pdfNameDisplay = document.getElementById("fileNameDisplay");
-        const addBtn = document.getElementById("addBtn");
-        const dropZone = document.getElementById("dropZone");
-        const toast = document.getElementById("toast");
-        const uploadContent = document.querySelector(".upload-content");
-
-        window.onload = function () {
-          indexedDB.deleteDatabase("FileDB");
-        };
-
-        function showToast(txt) {
-          toast.textContent = txt;
-          toast.setAttribute("aria-label", txt);
-          toast.classList.add("show-toast");
-          setTimeout(() => toast.classList.remove("show-toast"), 3000);
-        }
-
-        function IsFileOne(files) {
-          if (files.length !== 1) {
-            showToast("فقط یک فایل را انتخاب کنید");
-            pdfNameDisplay.textContent = "";
-            return false;
-          }
-          return true;
-        }
-
-        function isPdf(files) {
-          if (files[0].name.split(".")[1] === "pdf") {
-            return true;
-          }
-          showToast("فایل وارد شده فقط باید pdf باشد");
-          return false;
-        }
-
-        function uploadFileHandler() {
-          const files = fileIpt.files;
-          if (!IsFileOne(files) || !isPdf(files)) return;
-
-          const name = files[0].name;
-          pdfNameDisplay.textContent = name;
-        }
-
-        function dragleaveHandle(e) {
-          e.preventDefault();
-          const files = fileIpt.files;
-
-          if (!IsFileOne(files) || !isPdf(files)) return;
-
-          this.style.borderColor = "#b39ddb";
-          this.style.background = "#f8f6fc";
-          this.style.boxShadow = "none";
-        }
-
-        function opendb() {
-          return new Promise(async (res, rej) => {
-            const req = indexedDB.open("FileDB", 1);
-
-            req.onupgradeneeded = function (e) {
-              const db = e.target.result;
-              console.log("در حال اپگرید دیتابیس");
-
-              if (db.objectStoreNames.contains("files")) {
-                db.deleteObjectStore("files");
-                console.log("قبلی حذف شد");
-              }
-
-              const objectStore = db.createObjectStore("files", {
-                keyPath: "id",
-              });
-              console.log("object store ایجاد شد");
-            };
-
-            req.onsuccess = function (e) {
-              const db = e.target.result;
-              console.log("اتصال به دیتابیس موفق");
-              res(db);
-            };
-
-            req.onerror = function (e) {
-              console.error(e.target.error);
-              rej(e.target.error);
-            };
-          });
-        }
-
-        async function saveToDB(file, name, type, size) {
-          try {
-            const db = await opendb();
-
-            return new Promise((res, rej) => {
-              const transaction = db.transaction(["files"], "readwrite");
-              const store = transaction.objectStore("files");
-
-              const fileData = {
-                id: "currentPDF",
-                name,
-                type,
-                size,
-                file,
-              };
-
-              const putReq = store.put(fileData);
-
-              putReq.onsuccess = function (e) {
-                console.log("فایل در دیبی ذخیره شد", name);
-                res();
-              };
-
-              putReq.onerror = function (e) {
-                console.error(e.target.error);
-                rej(e.target.error);
-              };
-            });
-          } catch (error) {
-            console.error(error);
-          }
-        }
-
-        async function deleteFile() {
-          try {
-            const db = await opendb();
-
-            return new Promise((res, rej) => {
-              const transaction = db.transaction(["files"], "readwrite");
-              const store = transaction.objectStore("files");
-
-              const deleteReq = store.delete("currentPDF");
-
-              deleteReq.onsuccess = function () {
-                res();
-              };
-
-              deleteReq.onerror = function (e) {
-                rej(e.target.error);
-              };
-            });
-          } catch (error) {
-            console.error(error);
-          }
-        }
-
-        fileIpt.addEventListener("change", uploadFileHandler);
-
-        dropZone.addEventListener("click", function (e) {
-          e.stopPropagation();
-          fileIpt.click();
-        });
-
-        addBtn.addEventListener("click", async function (e) {
-          e.preventDefault();
-          const files = fileIpt.files;
-          const file = files[0];
-
-          if (!file) {
-            showToast("ابتدا فایل را اضافه کنید");
-            fileIpt.focus();
-
-            return;
-          }
-
-          if (!isPdf(files)) {
-            showToast("فایل وارد شده فقط باید pdf باشد");
-
-            return;
-          }
-
-          const name = file.name;
-
-          if (files && files.length === 1) {
-            showToast(`فایل ${name} اضافه شد`);
-          }
-
-          const size = file.size;
-          const type = file.type;
-
-          try {
-            await saveToDB(file, name, type, size);
-            setTimeout(() => (location.href = "editor.html"), 1000);
-          } catch (error) {
-            console.error(error);
-          }
-        });
-
-        dropZone.addEventListener("dragleave", dragleaveHandle);
-
-        dropZone.addEventListener("drop", function (e) {
-          e.preventDefault();
-          dragleaveHandle(e);
-
-          const dt = e.dataTransfer;
-          if (dt && dt.files) {
-            fileIpt.files = dt.files;
-            uploadFileHandler();
-
-            const mainText = this.querySelector(".main-text");
-            const sunText = this.querySelector(".sub-text");
-            mainText.textContent = dt.files[0].name;
-            sunText.textContent = "برای تغییر کلیک کنید";
-          }
-        });
-
-        fileIpt.addEventListener("change", function (e) {
-          const files = this.files;
-          if (!IsFileOne(files) || !isPdf(files)) return;
-          const mainText = dropZone.querySelector(".main-text");
-          const sunText = dropZone.querySelector(".sub-text");
-
-          mainText.textContent = files[0].name;
-          sunText.textContent = "برای تغییر کلیک کنید";
-        });
-      })();
-    </script>
+    <script src="shared.js"></script>
+    <script src="uploadFile.js"></script>
   </body>
 </html>

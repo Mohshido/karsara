@@ -3,50 +3,91 @@ const {
   BrowserWindow,
   ipcMain,
   dialog,
-  globalShortcut,
   shell,
+  utilityProcess,
 } = require("electron");
 const path = require("path");
 const fs = require("fs");
-const pdfParse = require("pdf-parse");
-const sherpa = require("sherpa-onnx-node");
-
-app.asar = false;
+const { pathToFileURL } = require("node:url");
+const { validatePDF, validateText, safeName } = require("./validation");
 
 let win = null;
-let tts = null;
-let busySpeaking = false;
-
-// ─── TTS INIT (قبل از پنجره) ───
-function initTTS() {
-  try {
-    tts = new sherpa.OfflineTts({
-      model: {
-        vits: {
-          model: path.join(
-            __dirname,
-            "models/vits-piper-fa_IR-ganji-medium/fa_IR-ganji-medium.onnx"
-          ),
-          tokens: path.join(
-            __dirname,
-            "models/vits-piper-fa_IR-ganji-medium/tokens.txt"
-          ),
-          dataDir: path.join(
-            __dirname,
-            "models/vits-piper-fa_IR-ganji-medium/espeak-ng-data"
-          ),
-        },
-        numThreads: 2,
-        debug: 0,
-        provider: "cpu",
+const jobs = new Set();
+const exportedFiles = new Set();
+const pages = new Set(["uploadFile.html", "editor.html", "workSpace.html"]);
+const allowedURLs = new Set(
+  [...pages].map((page) => pathToFileURL(path.join(__dirname, page)).href),
+);
+function trusted(event) {
+  if (
+    !win ||
+    event.sender !== win.webContents ||
+    event.senderFrame !== win.webContents.mainFrame ||
+    !allowedURLs.has(event.senderFrame.url)
+  )
+    throw new Error("Untrusted IPC sender");
+}
+function handle(channel, action) {
+  ipcMain.handle(channel, async (event, ...args) => {
+    try {
+      trusted(event);
+      return await action(event, ...args);
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  });
+}
+function runJob(kind, data) {
+  if ([...jobs].some((job) => job.kind === kind))
+    return Promise.reject(new Error("پردازش قبلی هنوز تمام نشده است"));
+  return new Promise((resolve, reject) => {
+    const worker = utilityProcess.fork(
+      path.join(__dirname, "processor.js"),
+      [],
+      {
+        serviceName: "Karsara document processor",
+        execArgv: ["--max-old-space-size=256"],
       },
-      maxNumSentences: 10,
+    );
+    worker.once("spawn", () => {
+      if (jobs.has(job))
+        worker.postMessage({
+          kind,
+          data,
+          modelRoot: path.join(
+            app.isPackaged ? process.resourcesPath : __dirname,
+            "models",
+          ),
+        });
+      else worker.kill();
     });
-    console.log("TTS آماده است");
-  } catch (err) {
-    console.error("خطا در راه‌اندازی TTS:", err);
-    tts = null;
-  }
+    const job = {
+      worker,
+      kind,
+      cancel: () => {
+        finish(new Error("لغو شد"));
+        worker.kill();
+      },
+    };
+    const timer = setTimeout(job.cancel, 120000);
+    function finish(error, result) {
+      if (!jobs.delete(job)) return;
+      clearTimeout(timer);
+      worker.kill();
+      error ? reject(error) : resolve(result);
+    }
+    jobs.add(job);
+    worker.once("message", (result) =>
+      result.success ? finish(null, result) : finish(new Error(result.error)),
+    );
+    worker.once("error", (type) => finish(new Error(String(type))));
+    worker.once("exit", (code) =>
+      finish(new Error(`Processor exited (${code})`)),
+    );
+  });
+}
+function cancelJobs(kind) {
+  for (const job of [...jobs]) if (!kind || job.kind === kind) job.cancel();
 }
 
 function createWindow() {
@@ -60,137 +101,92 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      sandbox: true,
       preload: path.join(__dirname, "preload.js"),
     },
   });
 
-  win.loadFile("uploadFile.html");
+  win.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
+  win.webContents.on("will-navigate", (event, url) => {
+    if (!allowedURLs.has(url)) event.preventDefault();
+  });
+  win.webContents.on("will-redirect", (event) => event.preventDefault());
+  win.webContents.on(
+    "did-start-navigation",
+    (_event, _url, _inPlace, isMainFrame) => {
+      if (isMainFrame) cancelJobs();
+    },
+  );
+  win.webContents.session.setPermissionRequestHandler(
+    (contents, permission, callback) =>
+      callback(
+        contents === win?.webContents &&
+          allowedURLs.has(contents.getURL()) &&
+          permission === "clipboard-read",
+      ),
+  );
+  win.webContents.on("will-prevent-unload", (event) => {
+    const choice = dialog.showMessageBoxSync(win, {
+      type: "warning",
+      buttons: ["ماندن", "خروج بدون ذخیره"],
+      defaultId: 0,
+      cancelId: 0,
+      message:
+        "تغییرات هنوز ذخیره نشده‌اند. برای تلاش دوباره در برنامه بمانید.",
+    });
+    if (choice === 1) event.preventDefault();
+  });
+  win.loadFile(path.join(__dirname, "uploadFile.html"));
   win.once("ready-to-show", () => win.show());
-  win.on("closed", () => (win = null));
-}
-
-function registerShortcuts() {
-  globalShortcut.register("CommandOrControl+Shift+O", () => {
-    if (win) openFileDialog();
-  });
-  globalShortcut.register("CommandOrControl+Shift+P", () => {
-    if (win) win.webContents.send("shortcut-play");
-  });
-  globalShortcut.register("CommandOrControl+Shift+Q", () => {
-    if (win) win.webContents.send("shortcut-stop");
-  });
-  globalShortcut.register("CommandOrControl+Shift+W", () => {
-    if (win) win.webContents.send("shortcut-export-docx");
-  });
-  globalShortcut.register("CommandOrControl+Shift+L", () => {
-    if (win) win.webContents.send("shortcut-export-txt");
-  });
-  globalShortcut.register("CommandOrControl+Shift+V", () => {
-    if (win) win.webContents.send("shortcut-paste-fix");
+  win.on("closed", () => {
+    cancelJobs();
+    win = null;
   });
 }
 
-async function openFileDialog() {
+handle("open-file", async () => {
   const result = await dialog.showOpenDialog(win, {
     title: "انتخاب فایل PDF",
     filters: [{ name: "PDF", extensions: ["pdf"] }],
     properties: ["openFile"],
   });
-  if (!result.canceled && result.filePaths.length > 0) {
-    win.webContents.send("file-selected", result.filePaths[0]);
-  }
-}
-
-// ─── IPC ────────────────────────────────────────────────
-
-ipcMain.handle("extract-pdf", async (event, arrayBuffer) => {
-  try {
-    const buffer = Buffer.from(arrayBuffer);
-    const data = await pdfParse(buffer);
-    return { success: true, text: data.text, pages: data.numpages };
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
+  if (result.canceled || !result.filePaths.length) return { canceled: true };
+  const filePath = result.filePaths[0];
+  const stat = await fs.promises.stat(filePath);
+  if (stat.size > 25 * 1024 * 1024)
+    throw new Error("حداکثر اندازه فایل ۲۵ مگابایت است");
+  const buffer = await fs.promises.readFile(filePath);
+  validatePDF(buffer);
+  return {
+    success: true,
+    name: path.basename(filePath),
+    buffer: new Uint8Array(buffer),
+  };
 });
-
-ipcMain.handle("extract-pdf-path", async (event, filePath) => {
-  try {
-    const buffer = fs.readFileSync(filePath);
-    const data = await pdfParse(buffer);
-    return { success: true, text: data.text, pages: data.numpages };
-  } catch (err) {
-    return { success: false, error: err.message };
-  }
+handle("extract-pdf", async (_event, arrayBuffer) => {
+  if (!(arrayBuffer instanceof ArrayBuffer) && !ArrayBuffer.isView(arrayBuffer))
+    throw new Error("Invalid PDF input");
+  if (arrayBuffer.byteLength > 25 * 1024 * 1024)
+    throw new Error("PDF too large");
+  const buffer = Buffer.from(arrayBuffer);
+  validatePDF(buffer);
+  return runJob("pdf", buffer);
 });
-
-ipcMain.handle("open-file", async () => {
-  await openFileDialog();
-  return true;
+handle("speak-text", async (_event, text) => {
+  validateText(text, 12000);
+  if (!text.trim()) throw new Error("متن خالی است");
+  return runJob("speech", text.replace(/[\u200B\uFEFF]/g, "").trim());
 });
-
-// TTS: فقط تولید + بازگشت WAV - پخش در رندر
-ipcMain.handle("speak-text", async (event, text) => {
-  if (!tts)
-    return {
-      success: false,
-      error: "TTS آماده نیست - مدل sherpa بارگذاری نشد",
-    };
-  if (typeof text !== "string" || !text.trim())
-    return { success: false, error: "متن خالی است" };
-  if (busySpeaking) return { success: false, error: "در حال پخش قبلی" };
-
-  try {
-    busySpeaking = true;
-    const clean = text
-      .replace(/[""]/g, "")
-      .replace(/[\u200B-\u200D\uFEFF]/g, "")
-      .replace(/\s+/g, " ")
-      .trim();
-    if (!clean) {
-      busySpeaking = false;
-      return { success: false, error: "متن قابل پخش نیست" };
-    }
-
-    const audio = tts.generate({ text: clean, sid: 0, speed: 1.0 });
-    if (!audio?.samples?.length) {
-      busySpeaking = false;
-      return { success: false, error: "خروجی صوت خالی" };
-    }
-
-    const tempDir = path.join(app.getPath("temp"), "karsra-tts");
-    if (!fs.existsSync(tempDir))
-      fs.mkdirSync(tempDir, { recursive: true });
-    const wavPath = path.join(tempDir, `speech-${Date.now()}.wav`);
-    sherpa.writeWave(wavPath, {
-      samples: audio.samples,
-      sampleRate: audio.sampleRate,
-    });
-    const b64 = fs.readFileSync(wavPath).toString("base64");
-
-    busySpeaking = false;
-    return {
-      success: true,
-      buffer: b64,
-      sampleRate: audio.sampleRate,
-      duration: audio.samples.length / audio.sampleRate,
-    };
-  } catch (err) {
-    busySpeaking = false;
-    return { success: false, error: err.message || String(err) };
-  }
-});
-
-ipcMain.handle("stop-speak", async () => {
-  busySpeaking = false;
+handle("stop-speak", async () => {
+  cancelJobs("speech");
   return { success: true };
 });
 
 // ─── ذخیره TXT ──────────────────────────────────────
-ipcMain.handle("save-txt", async (event, { text, fileName }) => {
+handle("save-txt", async (event, { text, fileName }) => {
   try {
-    if (typeof text !== "string")
-      return { success: false, error: "متن نامعتبر است" };
-    const cleanName = (fileName || "output.pdf").replace(/\.pdf$/i, "");
+    validateText(text);
+    const cleanName = safeName(fileName);
     const save = await dialog.showSaveDialog(win, {
       title: "ذخیره فایل متنی",
       defaultPath: cleanName + ".txt",
@@ -198,7 +194,8 @@ ipcMain.handle("save-txt", async (event, { text, fileName }) => {
     });
     if (save.canceled || !save.filePath)
       return { success: false, canceled: true };
-    fs.writeFileSync(save.filePath, "\uFEFF" + text, "utf8");
+    await fs.promises.writeFile(save.filePath, "\uFEFF" + text, "utf8");
+    exportedFiles.add(save.filePath);
     return { success: true, filePath: save.filePath };
   } catch (err) {
     return { success: false, error: err.message || String(err) };
@@ -206,13 +203,17 @@ ipcMain.handle("save-txt", async (event, { text, fileName }) => {
 });
 
 // ─── ذخیره DOCX ─────────────────────────────────────
-ipcMain.handle("save-docx", async (event, { text, fileName }) => {
+handle("save-docx", async (event, { text, fileName }) => {
   try {
-    if (typeof text !== "string")
-      return { success: false, error: "متن نامعتبر است" };
-    const { Document, Packer, Paragraph, TextRun, AlignmentType } =
-      require("docx");
-    const cleanName = (fileName || "output.pdf").replace(/\.pdf$/i, "");
+    validateText(text);
+    const {
+      Document,
+      Packer,
+      Paragraph,
+      TextRun,
+      AlignmentType,
+    } = require("docx");
+    const cleanName = safeName(fileName);
     const save = await dialog.showSaveDialog(win, {
       title: "ذخیره فایل Word",
       defaultPath: cleanName + ".docx",
@@ -221,10 +222,7 @@ ipcMain.handle("save-docx", async (event, { text, fileName }) => {
     if (save.canceled || !save.filePath)
       return { success: false, canceled: true };
 
-    const lines = text
-      .split(/\r?\n/)
-      .map((l) => l.trim())
-      .filter(Boolean);
+    const lines = text.split(/\r?\n/);
     const paragraphs = lines.length
       ? lines.map(
           (line) =>
@@ -239,7 +237,7 @@ ipcMain.handle("save-docx", async (event, { text, fileName }) => {
                   rightToLeft: true,
                 }),
               ],
-            })
+            }),
         )
       : [
           new Paragraph({
@@ -274,38 +272,50 @@ ipcMain.handle("save-docx", async (event, { text, fileName }) => {
       ],
     });
     const buffer = await Packer.toBuffer(doc);
-    fs.writeFileSync(save.filePath, buffer);
+    await fs.promises.writeFile(save.filePath, buffer);
+    exportedFiles.add(save.filePath);
     return { success: true, filePath: save.filePath };
   } catch (err) {
     return { success: false, error: err.message || String(err) };
   }
 });
 
-ipcMain.handle("open-in-explorer", async (event, filePath) => {
-  if (filePath && fs.existsSync(filePath)) {
+handle("open-in-explorer", async (event, filePath) => {
+  if (
+    typeof filePath === "string" &&
+    exportedFiles.has(filePath) &&
+    fs.existsSync(filePath)
+  ) {
     shell.showItemInFolder(filePath);
     return true;
   }
   return false;
 });
 
-ipcMain.handle("navigate", async (event, page) => {
-  if (win) win.loadFile(page);
-  return true;
-});
-
 // ─── APP ─────────────────────────────────────────────
 app.whenReady().then(() => {
-  initTTS();
   createWindow();
-  registerShortcuts();
+  // Remove only speech WAVs generated by older versions of this application.
+  const oldAudio = path.join(app.getPath("temp"), "karsra-tts");
+  fs.promises
+    .readdir(oldAudio)
+    .then((names) =>
+      Promise.all(
+        names
+          .filter((name) => /^speech-\d+\.wav$/.test(name))
+          .map((name) =>
+            fs.promises.unlink(path.join(oldAudio, name)).catch(() => {}),
+          ),
+      ),
+    )
+    .catch(() => {});
 });
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
-app.on("will-quit", () => globalShortcut.unregisterAll());
+app.on("before-quit", () => cancelJobs());
 
 app.on("activate", () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
